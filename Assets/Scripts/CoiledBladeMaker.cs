@@ -35,12 +35,21 @@ public class CoiledBladeMaker : MonoBehaviour
         };
 
         // Sword values.
-        float swordHeight = 4.0f;
+        float bladeHeight = 4.0f;
+        int divisions = 100;
+        float numTurns = 2.0f;      // Number of rotations of the blade 360 degrees along the length of the blade.
 
-        // Extend the profile along the path for the length of the sword.
-        Matrix4x4[] path = new Matrix4x4[2];
-        path[0] = Matrix4x4.Translate(new Vector3(0, 0.0f, 0));
-        path[1] = Matrix4x4.Translate(new Vector3(0, swordHeight, 0));
+        // Extend the profile along the path for the length of the blade.
+        Matrix4x4[] path = new Matrix4x4[divisions + 1];
+
+        // Modified MakeCirclePath function from MeshUtilities to "coil" or rotate the blade along the path.
+        for (int i = 0; i <= divisions; i++)
+        {
+            float angle = (360.0f * i * numTurns) / divisions;
+            float yIncrement = (bladeHeight * i) / divisions;   // AI helped fix this value. Calcualtes the y value for each step of the sword.
+
+            path[i] = Matrix4x4.Rotate(Quaternion.Euler(0, -angle, 0)) * Matrix4x4.Translate(new Vector3(0, yIncrement, 0));
+        }
 
         meshFilter.mesh = MeshUtilities.Sweep(bladeProfile, path, false);
     }
