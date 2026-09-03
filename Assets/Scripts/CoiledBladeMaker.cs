@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 public class CoiledBladeMaker : MonoBehaviour
 {
-    public Material bladeMaterial;  // The double-sided material for the blade.
+    public Material bladeMaterial;  // The double-sided material.
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
