@@ -115,4 +115,67 @@ public class MeshUtilities
 
         return mesh;
     }
+
+    public static Mesh WallWithHole(Vector3 wallSize, Vector2 holePosition, float holeRadius, int holeDivisions)
+    {
+        Mesh mesh = new Mesh();
+
+        // Translates the holePosition to have its 0, 0, 0 value be the bottom left corner of the square.
+        float halfWallX = wallSize.x * 0.5f;
+        float halfWallY = wallSize.y * 0.5f;
+
+        Vector2 holeCenter = new Vector2(holePosition.x - halfWallX, holePosition.y - halfWallY);
+
+        Vector3[] vertices = new Vector3[4 + holeDivisions];     // Array of square and circle vertices.
+
+        // Vertices for corners of the square.
+        vertices[0] = new Vector3(-halfWallX, -halfWallY, 0.0f);
+        vertices[1] = new Vector3(halfWallX, -halfWallY, 0.0f);
+        vertices[2] = new Vector3(halfWallX, halfWallY, 0.0f);
+        vertices[3] = new Vector3(-halfWallX, halfWallY, 0.0f);
+
+        // The position in the vertices array that the hole vertices starts at.
+        int holeStart = 4;
+
+        // From Cylinder function of MeshUtilities in tutorial work (slightly edited).
+        float dTheta = Mathf.PI * 2.0f / holeDivisions;
+        for (int i = 0; i < holeDivisions; i++)
+        {
+            float theta = i * dTheta;
+            float x = holeCenter.x + holeRadius * Mathf.Cos(theta);
+            float y = holeCenter.y + holeRadius * Mathf.Sin(theta);
+            // Rim of hole.
+            vertices[holeStart + i] = new Vector3(x, y, 0.0f);
+        }
+
+        mesh.vertices = vertices;
+
+        int[] tris = new int[(holeDivisions + 4) * 3];   // The number of vertex references required to create all the triangles.
+        int currentTris = 0;                             // The current index.
+
+        int quarterDivisions = holeDivisions / 4;        // The number of divisions in each quarter of the hole.
+
+        // Creates the triangles of the square face (Modified logic from the draw cap triangles for-loop in Cylinder() of MeshUtilities).
+        for (int i = 0; i < holeDivisions; i++)
+        {
+            tris[currentTris++] = (i / quarterDivisions + 2) % 4;
+            tris[currentTris++] = holeStart + (i + 1) % holeDivisions;
+            tris[currentTris++] = holeStart + i;
+
+            // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas.
+            // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner.
+            if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4)
+            {
+                tris[currentTris++] = (i / quarterDivisions + 2) % 4;
+                tris[currentTris++] = ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
+                tris[currentTris++] = holeStart + (i + 1) % holeDivisions;
+            }
+        }
+
+        mesh.triangles = tris;
+
+        mesh.RecalculateNormals();
+
+        return mesh;
+    }
 }

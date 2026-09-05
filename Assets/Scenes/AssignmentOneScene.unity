@@ -145,7 +145,7 @@ Transform:
   m_GameObject: {fileID: 290170149}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: -0, z: 0}
+  m_LocalPosition: {x: 5, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -164,6 +164,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExcavatorMaker
   doubleSidedMaterial: {fileID: 2100000, guid: e2cdd5ff217565147983e2a5351ba633, type: 2}
+  wheelBase: {fileID: 0}
+  turntableJoint: {fileID: 0}
+  turntable: {fileID: 0}
+  body: {fileID: 0}
+  cab: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -473,6 +478,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoiledBladeMaker
   bladeMaterial: {fileID: 2100000, guid: e2cdd5ff217565147983e2a5351ba633, type: 2}
+--- !u!1 &605057868
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 605057869}
+  - component: {fileID: 605057870}
+  m_Layer: 0
+  m_Name: HoleInTheWall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &605057869
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605057868}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &605057870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605057868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ae1ef52d7598284b9a22a3a5c5b1b94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoleInTheWallMaker
+  doubleSidedMaterial: {fileID: 2100000, guid: e2cdd5ff217565147983e2a5351ba633, type: 2}
+  wallSize: {x: 4, y: 2.5, z: 0.3}
+  holePosition: {x: 1.2, y: 1.25}
+  holeRadius: 0.5
+  holeDivisions: 20
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -531,3 +585,4 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 557782123}
   - {fileID: 290170150}
+  - {fileID: 605057869}
