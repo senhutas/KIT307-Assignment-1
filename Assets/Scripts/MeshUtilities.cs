@@ -120,22 +120,29 @@ public class MeshUtilities
     {
         Mesh mesh = new Mesh();
 
-        // Translates the holePosition to have its 0, 0, 0 value be the bottom left corner of the square.
+        // Translates the holePosition to have its 0, 0, 0 value be the bottom left corner of the cube.
         float halfWallX = wallSize.x * 0.5f;
         float halfWallY = wallSize.y * 0.5f;
+        float halfWallZ = wallSize.z * 0.5f;
 
         Vector2 holeCenter = new Vector2(holePosition.x - halfWallX, holePosition.y - halfWallY);
 
-        Vector3[] vertices = new Vector3[4 + holeDivisions];     // Array of square and circle vertices.
+        Vector3[] vertices = new Vector3[4 + 4 + 16 + (holeDivisions * 2)]; ;   // Array of cube and cylinder verticies + duplicate vertices for each face of the cube.
 
-        // Vertices for corners of the square.
-        vertices[0] = new Vector3(-halfWallX, -halfWallY, 0.0f);
-        vertices[1] = new Vector3(halfWallX, -halfWallY, 0.0f);
-        vertices[2] = new Vector3(halfWallX, halfWallY, 0.0f);
-        vertices[3] = new Vector3(-halfWallX, halfWallY, 0.0f);
+        // Vertices for front and back corners of the cube.
+        vertices[0] = new Vector3(-halfWallX, -halfWallY, halfWallZ);
+        vertices[1] = new Vector3(halfWallX, -halfWallY, halfWallZ);
+        vertices[2] = new Vector3(halfWallX, halfWallY, halfWallZ);
+        vertices[3] = new Vector3(-halfWallX, halfWallY, halfWallZ);
+        
+        vertices[4] = new Vector3(-halfWallX, -halfWallY, -halfWallZ);
+        vertices[5] = new Vector3(halfWallX, -halfWallY, -halfWallZ);
+        vertices[6] = new Vector3(halfWallX, halfWallY, -halfWallZ);
+        vertices[7] = new Vector3(-halfWallX, halfWallY, -halfWallZ);
 
-        // The position in the vertices array that the hole vertices starts at.
-        int holeStart = 4;
+        // The position in the vertices array that associated vertices start at.
+        int frontHoleStart = 8;
+        int backHoleStart = 8 + holeDivisions;
 
         // From Cylinder function of MeshUtilities in tutorial work (slightly edited).
         float dTheta = Mathf.PI * 2.0f / holeDivisions;
@@ -144,14 +151,41 @@ public class MeshUtilities
             float theta = i * dTheta;
             float x = holeCenter.x + holeRadius * Mathf.Cos(theta);
             float y = holeCenter.y + holeRadius * Mathf.Sin(theta);
-            // Rim of hole.
-            vertices[holeStart + i] = new Vector3(x, y, 0.0f);
+            // Front rim of hole.
+            vertices[frontHoleStart + i] = new Vector3(x, y, halfWallZ);
+            // Back rim of hole.
+            vertices[backHoleStart + i] = new Vector3(x, y, -halfWallZ);
         }
+
+        int sidesFacesStart = 8 + holeDivisions * 2;    // Starting vertice for the duplicate vertices on the side faces of the cube.
+
+        // AI helped me get the ordering of this section correct as some of my faces were inside out. 
+        // Duplicate vertices of cube corners for sharp lighting.
+        // Top face of cube.
+        vertices[sidesFacesStart] = new Vector3(-halfWallX, halfWallY, halfWallZ);
+        vertices[sidesFacesStart + 1] = new Vector3(halfWallX, halfWallY, halfWallZ);
+        vertices[sidesFacesStart + 2] = new Vector3(halfWallX, halfWallY, -halfWallZ);
+        vertices[sidesFacesStart + 3] = new Vector3(-halfWallX, halfWallY, -halfWallZ);
+        // Bottom face of cube.
+        vertices[sidesFacesStart + 4] = new Vector3(-halfWallX, -halfWallY, halfWallZ);
+        vertices[sidesFacesStart + 5] = new Vector3(-halfWallX, -halfWallY, -halfWallZ);
+        vertices[sidesFacesStart + 6] = new Vector3(halfWallX, -halfWallY, -halfWallZ);
+        vertices[sidesFacesStart + 7] = new Vector3(halfWallX, -halfWallY, halfWallZ);
+        // Left face of cube.
+        vertices[sidesFacesStart + 8] = new Vector3(-halfWallX, halfWallY, halfWallZ);
+        vertices[sidesFacesStart + 9] = new Vector3(-halfWallX, halfWallY, -halfWallZ);
+        vertices[sidesFacesStart + 10] = new Vector3(-halfWallX, -halfWallY, -halfWallZ);
+        vertices[sidesFacesStart + 11] = new Vector3(-halfWallX, -halfWallY, halfWallZ);
+        // Right face of cube.
+        vertices[sidesFacesStart + 12] = new Vector3(halfWallX, halfWallY, halfWallZ);
+        vertices[sidesFacesStart + 13] = new Vector3(halfWallX, -halfWallY, halfWallZ);
+        vertices[sidesFacesStart + 14] = new Vector3(halfWallX, -halfWallY, -halfWallZ);
+        vertices[sidesFacesStart + 15] = new Vector3(halfWallX, halfWallY, -halfWallZ);
 
         mesh.vertices = vertices;
 
-        int[] tris = new int[(holeDivisions + 4) * 3];   // The number of vertex references required to create all the triangles.
-        int currentTris = 0;                             // The current index.
+        int[] tris = new int[((holeDivisions + 4) * 3) * 2 + 24];   // The number of vertex references required to create all the triangles.
+        int currentTris = 0;                                        // The current index.
 
         int quarterDivisions = holeDivisions / 4;        // The number of divisions in each quarter of the hole.
 
@@ -159,8 +193,8 @@ public class MeshUtilities
         for (int i = 0; i < holeDivisions; i++)
         {
             tris[currentTris++] = (i / quarterDivisions + 2) % 4;
-            tris[currentTris++] = holeStart + (i + 1) % holeDivisions;
-            tris[currentTris++] = holeStart + i;
+            tris[currentTris++] = frontHoleStart + (i + 1) % holeDivisions;
+            tris[currentTris++] = frontHoleStart + i;
 
             // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas.
             // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner.
@@ -168,8 +202,39 @@ public class MeshUtilities
             {
                 tris[currentTris++] = (i / quarterDivisions + 2) % 4;
                 tris[currentTris++] = ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
-                tris[currentTris++] = holeStart + (i + 1) % holeDivisions;
+                tris[currentTris++] = frontHoleStart + (i + 1) % holeDivisions;
             }
+        }
+
+        // Creates the triangles of the back face (Modified logic from the draw cap triangles for-loop in Cylinder() of MeshUtilities).
+        for (int i = 0; i < holeDivisions; i++)
+        {
+            tris[currentTris++] = 4 + (i / quarterDivisions + 2) % 4;
+            tris[currentTris++] = backHoleStart + i;
+            tris[currentTris++] = backHoleStart + (i + 1) % holeDivisions;
+
+            // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas.
+            // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner.
+            if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4)
+            {
+                tris[currentTris++] = 4 + (i / quarterDivisions + 2) % 4;
+                tris[currentTris++] = backHoleStart + (i + 1) % holeDivisions;
+                tris[currentTris++] = 4 + ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
+            }
+        }
+
+        // Creates the faces of the left, right, bottom, and top walls.
+        for (int i = 0; i < 4; i++)
+        {
+            // First triangle of the wall face.
+            tris[currentTris++] = sidesFacesStart + i * 4;
+            tris[currentTris++] = sidesFacesStart + i * 4 + 1;
+            tris[currentTris++] = sidesFacesStart + i * 4 + 2;
+
+            // Second triangle of wall face.
+            tris[currentTris++] = sidesFacesStart + i * 4;
+            tris[currentTris++] = sidesFacesStart + i * 4 + 2;
+            tris[currentTris++] = sidesFacesStart + i * 4 + 3;
         }
 
         mesh.triangles = tris;

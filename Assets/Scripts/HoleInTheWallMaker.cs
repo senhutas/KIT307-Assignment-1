@@ -12,7 +12,7 @@ public class HoleInTheWallMaker : MonoBehaviour
 
         MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 
-        meshFilter.mesh = MeshUtilities.WallWithHole(new Vector3(5.0f, 2.5f, 0.5f), new Vector2(1.2f, 1.25f), 0.5f, 20);
+        meshFilter.mesh = MeshUtilities.WallWithHole(new Vector3(5.0f, 2.5f, 0.5f), new Vector2(2.5f, 2f), 0.25f, 16);
     }
 
     // Update is called once per frame

@@ -504,7 +504,7 @@ Transform:
   m_GameObject: {fileID: 605057868}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 0}
+  m_LocalPosition: {x: 15, y: 1.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -523,10 +523,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HoleInTheWallMaker
   doubleSidedMaterial: {fileID: 2100000, guid: e2cdd5ff217565147983e2a5351ba633, type: 2}
-  wallSize: {x: 4, y: 2.5, z: 0.3}
-  holePosition: {x: 1.2, y: 1.25}
-  holeRadius: 0.5
-  holeDivisions: 20
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
