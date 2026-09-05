@@ -127,7 +127,8 @@ public class MeshUtilities
 
         Vector2 holeCenter = new Vector2(holePosition.x - halfWallX, holePosition.y - halfWallY);
 
-        Vector3[] vertices = new Vector3[4 + 4 + 16 + (holeDivisions * 2)]; ;   // Array of cube and cylinder verticies + duplicate vertices for each face of the cube.
+        Vector3[] vertices = new Vector3[4 + 4 + 16 + (holeDivisions * 4)];     // Array of cube and cylinder verticies + duplicate vertices for each face of the cube and
+                                                                                // edges of the cylinder (sharp lighting).
 
         // Vertices for front and back corners of the cube.
         vertices[0] = new Vector3(-halfWallX, -halfWallY, halfWallZ);
@@ -143,6 +144,8 @@ public class MeshUtilities
         // The position in the vertices array that associated vertices start at.
         int frontHoleStart = 8;
         int backHoleStart = 8 + holeDivisions;
+        int insideFrontStart = 8 + holeDivisions * 2;
+        int insideBackStart = 8 + holeDivisions * 3;
 
         // From Cylinder function of MeshUtilities in tutorial work (slightly edited).
         float dTheta = Mathf.PI * 2.0f / holeDivisions;
@@ -155,9 +158,13 @@ public class MeshUtilities
             vertices[frontHoleStart + i] = new Vector3(x, y, halfWallZ);
             // Back rim of hole.
             vertices[backHoleStart + i] = new Vector3(x, y, -halfWallZ);
+            // Duplicate for inside front rim of hole.
+            vertices[insideFrontStart + i] = new Vector3(x, y, halfWallZ);
+            // Duplicate for inside back rim of hole.
+            vertices[insideBackStart + i] = new Vector3(x, y, -halfWallZ);
         }
 
-        int sidesFacesStart = 8 + holeDivisions * 2;    // Starting vertice for the duplicate vertices on the side faces of the cube.
+        int sidesFacesStart = 8 + holeDivisions * 4;    // Starting vertice for the duplicate vertices on the side faces of the cube.
 
         // AI helped me get the ordering of this section correct as some of my faces were inside out. 
         // Duplicate vertices of cube corners for sharp lighting.
@@ -184,8 +191,8 @@ public class MeshUtilities
 
         mesh.vertices = vertices;
 
-        int[] tris = new int[((holeDivisions + 4) * 3) * 2 + 24];   // The number of vertex references required to create all the triangles.
-        int currentTris = 0;                                        // The current index.
+        int[] tris = new int[(holeDivisions * 3 + 12) * 2 + 24 + (holeDivisions * 6)];  // The number of vertex references required to create all the triangles.
+        int currentTris = 0;                                                            // The current index.
 
         int quarterDivisions = holeDivisions / 4;        // The number of divisions in each quarter of the hole.
 
@@ -235,6 +242,20 @@ public class MeshUtilities
             tris[currentTris++] = sidesFacesStart + i * 4;
             tris[currentTris++] = sidesFacesStart + i * 4 + 2;
             tris[currentTris++] = sidesFacesStart + i * 4 + 3;
+        }
+
+        // Creates faces of the inside of the hole in the wall.
+        for (int i = 0; i < holeDivisions; i++)
+        {
+            // First triangle of the hole face.
+            tris[currentTris++] = insideFrontStart + i;
+            tris[currentTris++] = insideBackStart + (i + 1) % holeDivisions;
+            tris[currentTris++] = insideBackStart + i;
+
+            // second triangle of the hole face.
+            tris[currentTris++] = insideFrontStart + i;
+            tris[currentTris++] = insideFrontStart + (i + 1) % holeDivisions;
+            tris[currentTris++] = insideBackStart + (i + 1) % holeDivisions;
         }
 
         mesh.triangles = tris;
