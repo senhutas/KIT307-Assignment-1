@@ -362,6 +362,43 @@ public class MeshUtilities
 
         mesh.vertices = vertices;
 
+        // Calculate the angle of the second hole from the first hole.
+        float secondHoleAngle = Mathf.Rad2Deg * Mathf.Atan2(secondHoleCenter.y - firstHoleCenter.y, secondHoleCenter.x - firstHoleCenter.x);
+        
+        if (secondHoleAngle < 0f)
+        {
+            secondHoleAngle += 360f;
+        }
+
+        // Quarters of the holes that will connect.
+        int firstHoleConnectionQuarter = 0;
+        int secondHoleConnectionQuarter = 0;
+
+        // If second hole is to the top right of the first hole.
+        if (secondHoleAngle >= 0f && secondHoleAngle < 90f)
+        {
+            firstHoleConnectionQuarter = 0;
+            secondHoleConnectionQuarter = 2;
+        }
+        // If the second hole is to the top left of the first hole.
+        else if (secondHoleAngle >= 90f && secondHoleAngle < 180f)
+        {
+            firstHoleConnectionQuarter = 1;
+            secondHoleConnectionQuarter = 3;
+        }
+        // If the second hole is to the bottom left of the first hole.
+        else if (secondHoleAngle >= 180f && secondHoleAngle < 270f)
+        {
+            firstHoleConnectionQuarter = 2;
+            secondHoleConnectionQuarter = 0;
+        }
+        // If the second hole is to the bottom right of the first hole.
+        else
+        {
+            firstHoleConnectionQuarter = 3;
+            secondHoleConnectionQuarter = 1;
+        }
+
         int[] tris = new int[((holeDivisions * 3 + 12) * 2 + 24 + (holeDivisions * 6)) * 2];    // The number of vertex references required to create all the triangles.
         int currentTris = 0;                                                                    // The current index.
 
@@ -370,69 +407,113 @@ public class MeshUtilities
         // Creates the triangles of the square face (Modified logic from the draw cap triangles for-loop in Cylinder() of MeshUtilities) for hole 1.
         for (int i = 0; i < holeDivisions; i++)
         {
-            tris[currentTris++] = (i / quarterDivisions + 2) % 4;
-            tris[currentTris++] = firstHoleFrontStart + (i + 1) % holeDivisions;
-            tris[currentTris++] = firstHoleFrontStart + i;
-
-            // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas.
-            // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner.
-            if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4)
+            if (i / quarterDivisions != firstHoleConnectionQuarter)
             {
                 tris[currentTris++] = (i / quarterDivisions + 2) % 4;
-                tris[currentTris++] = ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
                 tris[currentTris++] = firstHoleFrontStart + (i + 1) % holeDivisions;
+                tris[currentTris++] = firstHoleFrontStart + i;
+
+                // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas, now wrote if-statement condition.
+                // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner
+                if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4 && (i + 1) % holeDivisions / quarterDivisions != firstHoleConnectionQuarter)
+                {
+                    tris[currentTris++] = (i / quarterDivisions + 2) % 4;
+                    tris[currentTris++] = ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
+                    tris[currentTris++] = firstHoleFrontStart + (i + 1) % holeDivisions;
+                }
             }
         }
 
         // Creates the triangles of the square face (Modified logic from the draw cap triangles for-loop in Cylinder() of MeshUtilities) for hole 2.
         for (int i = 0; i < holeDivisions; i++)
         {
-            tris[currentTris++] = (i / quarterDivisions + 2) % 4;
-            tris[currentTris++] = secondHoleFrontStart + (i + 1) % holeDivisions;
-            tris[currentTris++] = secondHoleFrontStart + i;
-
-            // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas.
-            // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner.
-            if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4)
+            if (i / quarterDivisions != secondHoleConnectionQuarter)
             {
                 tris[currentTris++] = (i / quarterDivisions + 2) % 4;
-                tris[currentTris++] = ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
                 tris[currentTris++] = secondHoleFrontStart + (i + 1) % holeDivisions;
+                tris[currentTris++] = secondHoleFrontStart + i;
+
+                // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas, now wrote if-statement condition.
+                // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner
+                if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4 && (i + 1) % holeDivisions / quarterDivisions != secondHoleConnectionQuarter)
+                {
+                    tris[currentTris++] = (i / quarterDivisions + 2) % 4;
+                    tris[currentTris++] = ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
+                    tris[currentTris++] = secondHoleFrontStart + (i + 1) % holeDivisions;
+                }
             }
+        }
+
+        // Connects the front holes to each other.
+        for (int i = 0; i < quarterDivisions; i++)
+        {
+            // AI assisted with the formula for a couple of this once I had explained what I intended, the more complex ones were done with AI, at this point I might pause this project here because
+            // I think I'm starting to need too much health, the logic I need is working well, but the formulas I'm not getting, actually I will implement the rest the best I can
+            // but I will specifically label them to show what formulas AI made based on the logic I gave it, as opposed to what I've used it for up until now, which is bug fixing.
+            // THE ORDERING BELOW WAS DIRECTLY COPY PASTED FROM AI, NOT MY OWN FORMULAS, ONLY MY OWN LOGIC.
+            tris[currentTris++] = firstHoleBackStart + (firstHoleConnectionQuarter * quarterDivisions) + i;
+            tris[currentTris++] = firstHoleBackStart + ((firstHoleConnectionQuarter * quarterDivisions) + i + 1) % holeDivisions;
+            tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i);
+
+            tris[currentTris++] = firstHoleBackStart + ((firstHoleConnectionQuarter * quarterDivisions) + i + 1) % holeDivisions;
+            tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - 1 - i);
+            tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i);
         }
 
         // Creates the triangles of the back face (Modified logic from the draw cap triangles for-loop in Cylinder() of MeshUtilities) for hole 1.
         for (int i = 0; i < holeDivisions; i++)
         {
-            tris[currentTris++] = 4 + (i / quarterDivisions + 2) % 4;
-            tris[currentTris++] = firstHoleBackStart + i;
-            tris[currentTris++] = firstHoleBackStart + (i + 1) % holeDivisions;
-
-            // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas.
-            // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner.
-            if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4)
+            if (i / quarterDivisions != firstHoleConnectionQuarter)
             {
                 tris[currentTris++] = 4 + (i / quarterDivisions + 2) % 4;
+                tris[currentTris++] = firstHoleBackStart + i;
                 tris[currentTris++] = firstHoleBackStart + (i + 1) % holeDivisions;
-                tris[currentTris++] = 4 + ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
+
+                // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas, now wrote if-statement condition.
+                // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner
+                if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4 && (i + 1) % holeDivisions / quarterDivisions != firstHoleConnectionQuarter)
+                {
+                    tris[currentTris++] = 4 + (i / quarterDivisions + 2) % 4;
+                    tris[currentTris++] = firstHoleBackStart + (i + 1) % holeDivisions;
+                    tris[currentTris++] = 4 + ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
+                }
             }
         }
 
         // Creates the triangles of the back face (Modified logic from the draw cap triangles for-loop in Cylinder() of MeshUtilities) for hole 2.
         for (int i = 0; i < holeDivisions; i++)
         {
-            tris[currentTris++] = 4 + (i / quarterDivisions + 2) % 4;
-            tris[currentTris++] = secondHoleBackStart + i;
-            tris[currentTris++] = secondHoleBackStart + (i + 1) % holeDivisions;
-
-            // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas.
-            // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner.
-            if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4)
+            if (i / quarterDivisions != secondHoleConnectionQuarter)
             {
                 tris[currentTris++] = 4 + (i / quarterDivisions + 2) % 4;
+                tris[currentTris++] = secondHoleBackStart + i;
                 tris[currentTris++] = secondHoleBackStart + (i + 1) % holeDivisions;
-                tris[currentTris++] = 4 + ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
+
+                // AI did help me error check this section, I got the gist of it, but couldn't quite get the formulas, now wrote if-statement condition.
+                // If the next vertex is in the next quadrant (0, 90, 180, 270 degrees), also create connection to next square corner
+                if ((i / quarterDivisions + 2) % 4 != ((i + 1) % holeDivisions / quarterDivisions + 2) % 4 && (i + 1) % holeDivisions / quarterDivisions != secondHoleConnectionQuarter)
+                {
+                    tris[currentTris++] = 4 + (i / quarterDivisions + 2) % 4;
+                    tris[currentTris++] = secondHoleBackStart + (i + 1) % holeDivisions;
+                    tris[currentTris++] = 4 + ((i + 1) % holeDivisions / quarterDivisions + 2) % 4;
+                }
             }
+        }
+
+        // Connects the back holes to each other.
+        for (int i = 0; i < quarterDivisions; i++)
+        {
+            // AI assisted with the formula for a couple of this once I had explained what I intended, the more complex ones were done with AI, at this point I might pause this project here because
+            // I think I'm starting to need too much health, the logic I need is working well, but the formulas I'm not getting, actually I will implement the rest the best I can
+            // but I will specifically label them to show what formulas AI made based on the logic I gave it, as opposed to what I've used it for up until now, which is bug fixing.
+            // THE ORDERING BELOW WAS DIRECTLY COPY PASTED FROM AI, NOT MY OWN FORMULAS, ONLY MY OWN LOGIC.
+            tris[currentTris++] = firstHoleFrontStart + (firstHoleConnectionQuarter * quarterDivisions) + i;
+            tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i);
+            tris[currentTris++] = firstHoleFrontStart + ((firstHoleConnectionQuarter * quarterDivisions) + i + 1) % holeDivisions;
+
+            tris[currentTris++] = firstHoleFrontStart + ((firstHoleConnectionQuarter * quarterDivisions) + i + 1) % holeDivisions;
+            tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i);
+            tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - 1 - i);
         }
 
         // Creates the faces of the left, right, bottom, and top walls.
