@@ -17,6 +17,18 @@ public class ExcavatorMaker : MonoBehaviour
     public GameObject arm1;
     public GameObject arm2;
     public GameObject arm3;
+    public GameObject wheelJoint1;
+    public GameObject wheelJoint2;
+    public GameObject wheelJoint3;
+    public GameObject wheelJoint4;
+    public GameObject axle1;
+    public GameObject axle2;
+    public GameObject axle3;
+    public GameObject axle4;
+    public GameObject wheel1;
+    public GameObject wheel2;
+    public GameObject wheel3;
+    public GameObject wheel4;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -42,13 +54,13 @@ public class ExcavatorMaker : MonoBehaviour
 
         Matrix4x4[] wheelBasePath = new Matrix4x4[4];
         wheelBasePath[0] = Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.0f)) *
-                           Matrix4x4.Scale(new Vector3(0, 0, 0));
+                           Matrix4x4.Scale(new Vector3(0.0f, 0.0f, 0.0f));
         wheelBasePath[1] = Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.0f)) *
-                           Matrix4x4.Scale(new Vector3(2.0f, 0.4f, 2.0f));
+                           Matrix4x4.Scale(new Vector3(2.3f, 0.4f, 1.6f));
         wheelBasePath[2] = Matrix4x4.Translate(new Vector3(0.0f, 0.4f, 0.0f)) *
-                           Matrix4x4.Scale(new Vector3(2.0f, 0.4f, 2.0f));
+                           Matrix4x4.Scale(new Vector3(2.3f, 0.4f, 1.6f));
         wheelBasePath[3] = Matrix4x4.Translate(new Vector3(0.0f, 0.4f, 0.0f)) *
-                           Matrix4x4.Scale(new Vector3(0, 0, 0));
+                           Matrix4x4.Scale(new Vector3(0.0f, 0.0f, 0.0f));
 
         wheelBase.AddComponent<MeshFilter>().mesh = MeshUtilities.Sweep(squareProfile, wheelBasePath, true);
         wheelBase.AddComponent<MeshRenderer>().sharedMaterial = doubleSidedMaterial;
@@ -65,16 +77,16 @@ public class ExcavatorMaker : MonoBehaviour
         turntable = new GameObject();
         turntable.name = "Turntable";
         turntable.transform.parent = turntableJoint.transform;
-        turntable.transform.localPosition = new Vector3(0.0f, 0.15f, 0.0f);
+        turntable.transform.localPosition = new Vector3(0.0f, 0.10f, 0.0f);
 
-        turntable.AddComponent<MeshFilter>().mesh = MeshUtilities.Cylinder(16, 0.3f, 0.15f);
+        turntable.AddComponent<MeshFilter>().mesh = MeshUtilities.Cylinder(16, 0.3f, 0.10f);
         turntable.AddComponent<MeshRenderer>().sharedMaterial = doubleSidedMaterial;
 
         // Create the body of the excavator.
         body = new GameObject();
         body.name = "Body";
         body.transform.parent = turntableJoint.transform;
-        body.transform.localPosition = new Vector3(0, 0.3f, 0f);
+        body.transform.localPosition = new Vector3(0, 0.20f, 0f);
 
         Matrix4x4[] bodyPath = new Matrix4x4[4];
         bodyPath[0] = Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.0f)) *
@@ -212,6 +224,81 @@ public class ExcavatorMaker : MonoBehaviour
         arm3.name = "Arm3";
         arm3.transform.localPosition = new Vector3(0.8625f, 0.0f, 0.0f);    // AI helped give x values so I could line them up the way I wanted.
         arm3.transform.localRotation = Quaternion.identity;
+
+        // Create the joints for the wheels (technically axles).
+        wheelJoint1 = new GameObject("WheelJoint1");
+        wheelJoint1.transform.parent = wheelBase.transform;
+        wheelJoint1.transform.localPosition = new Vector3(0.80f, 0.2f, 0.8f);
+        wheelJoint1.transform.localRotation = Quaternion.identity;
+
+        wheelJoint2 = new GameObject("WheelJoint2");
+        wheelJoint2.transform.parent = wheelBase.transform;
+        wheelJoint2.transform.localPosition = new Vector3(-0.80f, 0.2f, 0.8f);
+        wheelJoint2.transform.localRotation = Quaternion.identity;
+
+        wheelJoint3 = new GameObject("WheelJoint3");
+        wheelJoint3.transform.parent = wheelBase.transform;
+        wheelJoint3.transform.localPosition = new Vector3(0.80f, 0.2f, -0.8f);
+        wheelJoint3.transform.localRotation = Quaternion.identity;
+
+        wheelJoint4 = new GameObject("WheelJoint4");
+        wheelJoint4.transform.parent = wheelBase.transform;
+        wheelJoint4.transform.localPosition = new Vector3(-0.80f, 0.2f, -0.8f);
+        wheelJoint4.transform.localRotation = Quaternion.identity;
+
+        // Create the first axle and connect it to the wheel base (well, the joint).
+        axle1 = new GameObject("Axle1");
+        axle1.transform.parent = wheelJoint1.transform;
+        axle1.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        axle1.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+
+        axle1.AddComponent<MeshFilter>().mesh = MeshUtilities.Cylinder(16, 0.08f, 0.1f);
+        axle1.AddComponent<MeshRenderer>().sharedMaterial = doubleSidedMaterial;
+
+        // Create the second axle and connect it to the wheel base (well, the joint).
+        axle2 = Instantiate(axle1, wheelJoint2.transform);
+        axle2.name = "Axle2";
+        axle2.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        axle2.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+
+        // Create the third axle and connect it to the wheel base (well, the joint).
+        axle3 = Instantiate(axle1, wheelJoint3.transform);
+        axle3.name = "Axle3";
+        axle3.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        axle3.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+
+        // Create the fourth axle and connect it to the wheel base (well, the joint).
+        axle4 = Instantiate(axle1, wheelJoint4.transform);
+        axle4.name = "Axle4";
+        axle4.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        axle4.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+
+        // Create the first wheel and attach it to the associated axle.
+        wheel1 = new GameObject("Wheel1");
+        wheel1.transform.parent = axle1.transform;
+        wheel1.transform.localPosition = new Vector3(0.0f, 0.20f, 0.0f);
+        wheel1.transform.localRotation = Quaternion.identity;
+
+        wheel1.AddComponent<MeshFilter>().mesh = MeshUtilities.Cylinder(16, 0.375f, 0.15f);
+        wheel1.AddComponent<MeshRenderer>().sharedMaterial = doubleSidedMaterial;
+
+        // Create the second wheel and attach it to the associated axle.
+        wheel2 = Instantiate(wheel1, axle2.transform);
+        wheel2.name = "Wheel2";
+        wheel2.transform.localPosition = new Vector3(0.0f, 0.20f, -0.0f);
+        wheel2.transform.localRotation = Quaternion.identity;
+
+        // Create the third wheel and attach it to the associated axle.
+        wheel3 = Instantiate(wheel1, axle3.transform);
+        wheel3.name = "Wheel3";
+        wheel3.transform.localPosition = new Vector3(0.0f, 0.20f, 0.0f);
+        wheel3.transform.localRotation = Quaternion.identity;
+
+        // Create the fourth wheel and attach it to the associated axle.
+        wheel4 = Instantiate(wheel1, axle4.transform);
+        wheel4.name = "Wheel4";
+        wheel4.transform.localPosition = new Vector3(0.0f, 0.20f, 0.0f);
+        wheel4.transform.localRotation = Quaternion.identity;
     }
 
     // Update is called once per frame
