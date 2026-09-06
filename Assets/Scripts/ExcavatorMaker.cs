@@ -132,6 +132,86 @@ public class ExcavatorMaker : MonoBehaviour
 
         armMount.AddComponent<MeshFilter>().mesh = MeshUtilities.Sweep(squareProfile, armMountPath, true);
         armMount.AddComponent<MeshRenderer>().sharedMaterial = doubleSidedMaterial;
+
+        // Create arm profile for, well arms I guess.
+        Vector3[] armProfile = new Vector3[]
+        {
+            // Right end of arm.
+            new Vector3( 0.90f, -0.30f, 0.0f),
+            new Vector3( 1.10f, -0.22f, 0.0f),
+            new Vector3( 1.20f, -0.10f, 0.0f),
+            new Vector3( 1.20f,  0.10f, 0.0f),
+            new Vector3( 1.10f,  0.22f, 0.0f),
+            new Vector3( 0.90f,  0.30f, 0.0f),
+
+            // Left end of arm.
+            new Vector3(-0.90f,  0.30f, 0.0f),
+            new Vector3(-1.10f,  0.22f, 0.0f),
+            new Vector3(-1.20f,  0.10f, 0.0f),
+            new Vector3(-1.20f, -0.10f, 0.0f),
+            new Vector3(-1.10f, -0.22f, 0.0f),
+            new Vector3(-0.90f, -0.30f, 0.0f)
+        };
+
+        // Create the path for the arm.
+        // Both the profile and path are very similar to the lamp work in tutorial.
+        Matrix4x4[] armPath = new Matrix4x4[10];
+        armPath[0] = Matrix4x4.Scale(new Vector3(0.0f, 0.0f, 1.0f)) * 
+                     Matrix4x4.Translate(new Vector3(0.0f, 0.0f, -0.20f));
+        armPath[1] = Matrix4x4.Scale(new Vector3(0.9f, 0.8f, 1.0f)) * 
+                     Matrix4x4.Translate(new Vector3(0.0f, 0.0f, -0.20f));
+        armPath[2] = Matrix4x4.Scale(new Vector3(0.9f, 0.8f, 1.0f)) * 
+                     Matrix4x4.Translate(new Vector3(0.0f, 0.0f, -0.20f));
+        armPath[3] = Matrix4x4.Translate(new Vector3(0.0f, 0.0f, -0.15f));
+        armPath[4] = Matrix4x4.Translate(new Vector3(0.0f, 0.0f, -0.15f));
+        armPath[5] = Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.15f));
+        armPath[6] = Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.15f));
+        armPath[7] = Matrix4x4.Scale(new Vector3(0.9f, 0.8f, 1.0f)) * 
+                     Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.20f));
+        armPath[8] = Matrix4x4.Scale(new Vector3(0.9f, 0.8f, 1.0f)) * 
+                     Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.20f));
+        armPath[9] = Matrix4x4.Scale(new Vector3(0.0f, 0.0f, 1.0f)) * 
+                     Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.20f));
+
+        // Create the joints for the arm to rotate around.
+        armJoint1 = new GameObject("ArmJoint1");
+        armJoint1.transform.parent = armMount.transform;
+        armJoint1.transform.localPosition = new Vector3(0.0f, 0.5f, 0.0f);
+        armJoint1.transform.localRotation = Quaternion.Euler(0f, 0f, 35f);
+        
+        armJoint2 = new GameObject("ArmJoint2");
+        armJoint2.transform.parent = armJoint1.transform;
+        armJoint2.transform.localPosition = new Vector3(1.725f, 0.0f, 0.0f);    // AI helped give x values so I could line them up the way I wanted.
+        armJoint2.transform.localRotation = Quaternion.Euler(0f, 0f, -35f);
+
+        armJoint3 = new GameObject("ArmJoint3");
+        armJoint3.transform.parent = armJoint2.transform;
+        armJoint3.transform.localPosition = new Vector3(1.725f, 0.0f, 0.0f);    // AI helped give x values so I could line them up the way I wanted.
+        armJoint3.transform.localRotation = Quaternion.Euler(0f, 0f, -35f);
+
+        // Create the first arm.
+        arm1 = new GameObject();
+        arm1.name = "Arm1";
+
+        arm1.AddComponent<MeshFilter>().mesh = MeshUtilities.Sweep(armProfile, armPath, false);
+        arm1.AddComponent<MeshRenderer>().sharedMaterial = doubleSidedMaterial;
+
+        // Attach the first arm to the first arm joint.
+        arm1.transform.parent = armJoint1.transform;
+        arm1.transform.localPosition = new Vector3(0.8625f, 0.0f, 0.0f);    // AI helped give x values so I could line them up the way I wanted.
+        arm1.transform.localRotation = Quaternion.identity;
+
+        // Create and attach the second arm to the second arm joint.
+        arm2 = Instantiate(arm1, armJoint2.transform);
+        arm2.name = "Arm2";
+        arm2.transform.localPosition = new Vector3(0.8625f, 0.0f, 0.0f);    // AI helped give x values so I could line them up the way I wanted.
+        arm2.transform.localRotation = Quaternion.identity;
+
+        // Create and attach the third arm to the third arm joint.
+        arm3 = Instantiate(arm1, armJoint3.transform);
+        arm3.name = "Arm3";
+        arm3.transform.localPosition = new Vector3(0.8625f, 0.0f, 0.0f);    // AI helped give x values so I could line them up the way I wanted.
+        arm3.transform.localRotation = Quaternion.identity;
     }
 
     // Update is called once per frame
