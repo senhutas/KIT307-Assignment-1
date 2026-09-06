@@ -453,11 +453,11 @@ public class MeshUtilities
             // THE ORDERING BELOW WAS DIRECTLY COPY PASTED FROM AI, NOT MY OWN FORMULAS, ONLY MY OWN LOGIC.
             tris[currentTris++] = firstHoleBackStart + (firstHoleConnectionQuarter * quarterDivisions) + i;
             tris[currentTris++] = firstHoleBackStart + ((firstHoleConnectionQuarter * quarterDivisions) + i + 1) % holeDivisions;
-            tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i);
+            tris[currentTris++] = secondHoleBackStart + ((secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i)) % holeDivisions;
 
             tris[currentTris++] = firstHoleBackStart + ((firstHoleConnectionQuarter * quarterDivisions) + i + 1) % holeDivisions;
-            tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - 1 - i);
-            tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i);
+            tris[currentTris++] = secondHoleBackStart + ((secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - 1 - i)) % holeDivisions;
+            tris[currentTris++] = secondHoleBackStart + ((secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i)) % holeDivisions;
         }
 
         // Creates the triangles of the back face (Modified logic from the draw cap triangles for-loop in Cylinder() of MeshUtilities) for hole 1.
@@ -508,12 +508,12 @@ public class MeshUtilities
             // but I will specifically label them to show what formulas AI made based on the logic I gave it, as opposed to what I've used it for up until now, which is bug fixing.
             // THE ORDERING BELOW WAS DIRECTLY COPY PASTED FROM AI, NOT MY OWN FORMULAS, ONLY MY OWN LOGIC.
             tris[currentTris++] = firstHoleFrontStart + (firstHoleConnectionQuarter * quarterDivisions) + i;
-            tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i);
+            tris[currentTris++] = secondHoleFrontStart + ((secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i)) % holeDivisions;
             tris[currentTris++] = firstHoleFrontStart + ((firstHoleConnectionQuarter * quarterDivisions) + i + 1) % holeDivisions;
 
             tris[currentTris++] = firstHoleFrontStart + ((firstHoleConnectionQuarter * quarterDivisions) + i + 1) % holeDivisions;
-            tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i);
-            tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - 1 - i);
+            tris[currentTris++] = secondHoleFrontStart + ((secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i)) % holeDivisions;
+            tris[currentTris++] = secondHoleFrontStart + ((secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - 1 - i)) % holeDivisions;
         }
 
         // Creates the faces of the left, right, bottom, and top walls.
