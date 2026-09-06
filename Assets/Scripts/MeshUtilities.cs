@@ -460,6 +460,58 @@ public class MeshUtilities
             tris[currentTris++] = secondHoleBackStart + ((secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i)) % holeDivisions;
         }
 
+        // Fills in the gap between the cube corners and the connected quarters of the holes for the front face.
+        if (firstHoleConnectionQuarter == 0 || firstHoleConnectionQuarter == 2)
+        {
+            // If the second hole is to the top right of the first hole.
+            if (secondHoleCenter.x > firstHoleCenter.x)
+            {
+                tris[currentTris++] = 3;
+                tris[currentTris++] = firstHoleFrontStart + ((firstHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+                tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions);
+
+                tris[currentTris++] = 1;
+                tris[currentTris++] = secondHoleFrontStart + ((secondHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+                tris[currentTris++] = firstHoleFrontStart + (firstHoleConnectionQuarter * quarterDivisions);
+            }
+            // If the second hole is to the bottom left of the first hole.
+            else
+            {
+                tris[currentTris++] = 3;
+                tris[currentTris++] = secondHoleFrontStart + ((secondHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+                tris[currentTris++] = firstHoleFrontStart + (firstHoleConnectionQuarter * quarterDivisions);
+
+                tris[currentTris++] = 1;
+                tris[currentTris++] = firstHoleFrontStart + ((firstHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+                tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions);
+            }
+        }
+        else
+        {
+            // If the second hole is to the bottom right of the first hole.
+            if (secondHoleCenter.x > firstHoleCenter.x)
+            {
+                tris[currentTris++] = 2;
+                tris[currentTris++] = firstHoleFrontStart + ((firstHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+                tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions);
+
+                tris[currentTris++] = 0;
+                tris[currentTris++] = secondHoleFrontStart + ((secondHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+                tris[currentTris++] = firstHoleFrontStart + (firstHoleConnectionQuarter * quarterDivisions);
+            }
+            // If the second hole is to the top left of the first hole.
+            else
+            {
+                tris[currentTris++] = 2;
+                tris[currentTris++] = secondHoleFrontStart + ((secondHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+                tris[currentTris++] = firstHoleFrontStart + (firstHoleConnectionQuarter * quarterDivisions);
+
+                tris[currentTris++] = 0;
+                tris[currentTris++] = firstHoleFrontStart + ((firstHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+                tris[currentTris++] = secondHoleFrontStart + (secondHoleConnectionQuarter * quarterDivisions);
+            }
+        }
+
         // Creates the triangles of the back face (Modified logic from the draw cap triangles for-loop in Cylinder() of MeshUtilities) for hole 1.
         for (int i = 0; i < holeDivisions; i++)
         {
@@ -514,6 +566,58 @@ public class MeshUtilities
             tris[currentTris++] = firstHoleFrontStart + ((firstHoleConnectionQuarter * quarterDivisions) + i + 1) % holeDivisions;
             tris[currentTris++] = secondHoleFrontStart + ((secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - i)) % holeDivisions;
             tris[currentTris++] = secondHoleFrontStart + ((secondHoleConnectionQuarter * quarterDivisions) + (quarterDivisions - 1 - i)) % holeDivisions;
+        }
+
+        // Fills in the gap between the cube corners and the connected quarters of the holes for the back face
+        if (firstHoleConnectionQuarter == 0 || firstHoleConnectionQuarter == 2)
+        {
+            // If the second hole is to the top right of the first hole.
+            if (secondHoleCenter.x > firstHoleCenter.x)
+            {
+                tris[currentTris++] = 7;
+                tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions);
+                tris[currentTris++] = firstHoleBackStart + ((firstHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+
+                tris[currentTris++] = 5;
+                tris[currentTris++] = firstHoleBackStart + (firstHoleConnectionQuarter * quarterDivisions);
+                tris[currentTris++] = secondHoleBackStart + ((secondHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+            }
+            // If the second hole is to the bottom left of the first hole.
+            else
+            {
+                tris[currentTris++] = 7;
+                tris[currentTris++] = firstHoleBackStart + (firstHoleConnectionQuarter * quarterDivisions);
+                tris[currentTris++] = secondHoleBackStart + ((secondHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+
+                tris[currentTris++] = 5;
+                tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions);
+                tris[currentTris++] = firstHoleBackStart + ((firstHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+            }
+        }
+        else
+        {
+            // If the second hole is to the bottom right of the first hole.
+            if (secondHoleCenter.x > firstHoleCenter.x)
+            {
+                tris[currentTris++] = 6;
+                tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions);
+                tris[currentTris++] = firstHoleBackStart + ((firstHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+
+                tris[currentTris++] = 4;
+                tris[currentTris++] = firstHoleBackStart + (firstHoleConnectionQuarter * quarterDivisions);
+                tris[currentTris++] = secondHoleBackStart + ((secondHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+            }
+            // If the second hole is to the top left of the first hole.
+            else
+            {
+                tris[currentTris++] = 6;
+                tris[currentTris++] = firstHoleBackStart + (firstHoleConnectionQuarter * quarterDivisions);
+                tris[currentTris++] = secondHoleBackStart + ((secondHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+
+                tris[currentTris++] = 4;
+                tris[currentTris++] = secondHoleBackStart + (secondHoleConnectionQuarter * quarterDivisions);
+                tris[currentTris++] = firstHoleBackStart + ((firstHoleConnectionQuarter + 1) * quarterDivisions) % holeDivisions;
+            }
         }
 
         // Creates the faces of the left, right, bottom, and top walls.
