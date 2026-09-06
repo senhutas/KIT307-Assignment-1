@@ -11,6 +11,12 @@ public class ExcavatorMaker : MonoBehaviour
     public GameObject body;
     public GameObject cab;
     public GameObject armMount;
+    public GameObject armJoint1;
+    public GameObject armJoint2;
+    public GameObject armJoint3;
+    public GameObject arm1;
+    public GameObject arm2;
+    public GameObject arm3;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

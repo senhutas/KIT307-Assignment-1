@@ -169,6 +169,13 @@ MonoBehaviour:
   turntable: {fileID: 0}
   body: {fileID: 0}
   cab: {fileID: 0}
+  armMount: {fileID: 0}
+  armJoint1: {fileID: 0}
+  armJoint2: {fileID: 0}
+  armJoint3: {fileID: 0}
+  arm1: {fileID: 0}
+  arm2: {fileID: 0}
+  arm3: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,6 +579,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1457545547
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1457545549}
+  - component: {fileID: 1457545548}
+  m_Layer: 0
+  m_Name: TwoHolesInTheWall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1457545548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1457545547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8561cd96db0c19c4ba4a9c5f9a5053db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TwoHolesInTheWallMaker
+  doubleSidedMaterial: {fileID: 2100000, guid: e2cdd5ff217565147983e2a5351ba633, type: 2}
+--- !u!4 &1457545549
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1457545547}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 25, y: 1.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -582,3 +634,4 @@ SceneRoots:
   - {fileID: 557782123}
   - {fileID: 290170150}
   - {fileID: 605057869}
+  - {fileID: 1457545549}
